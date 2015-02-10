@@ -11,6 +11,7 @@ var autoprefixer = require('gulp-autoprefixer');
 var rimraf = require('gulp-rimraf');
 var notify = require('gulp-notify');
 var browserSync = require('browser-sync');
+var Rsync = require('rsync');
 
 
 
@@ -25,6 +26,22 @@ gulp.task('clean', function() {
 
 
 
+gulp.task('upload', function() {
+    // assumes public key auth is configured 
+    var server = 'root@dca.fresk.io';
+    var src = './build';
+    var dest = '/var/www/';
+
+    var rsync = new Rsync()
+        .shell('ssh')
+        .flags('raz')
+        .source(src)
+        .destination(dest)
+        .execute();
+});
+
+
+
 // build tasks //////////////////////////////////////////////////
 gulp.task('build', ['css', 'html', 'images', 'browserify']);
 
@@ -33,17 +50,17 @@ gulp.task('browserify', function() {
         NODE_ENV: process.env.NODE_ENV
     };
     return browserify('./public/index.js')
-        .transform(envify(environ))
-        .transform(partialify)
-        .bundle({
-            debug: process.env.NODE_ENV != 'production'
-        })
-        .on('error', function(err) {
-            notify.onError('Error: <%= error.message %>')(err);
-            this.end();
-        })
-        .pipe(source('index.js'))
-        .pipe(gulp.dest('build/'));
+    .transform(envify(environ))
+    .transform(partialify)
+    .bundle({
+        debug: process.env.NODE_ENV != 'production'
+    })
+    .on('error', function(err) {
+        notify.onError('Error: <%= error.message %>')(err);
+        this.end();
+    })
+    .pipe(source('index.js'))
+    .pipe(gulp.dest('build/'));
 });
 
 
@@ -51,13 +68,13 @@ gulp.task('browserify', function() {
 // assets //////////////////////////////////////////////////////
 gulp.task('html', function() {
     return gulp.src('./public/**/*.html')
-        .pipe(gulp.dest('build/'))
+    .pipe(gulp.dest('build/'))
 });
 
 gulp.task('css', function() {
     return gulp.src('public/**/*.css')
-        .pipe(autoprefixer('last 1 version'))
-        .pipe(gulp.dest('./build'))
+    .pipe(autoprefixer('last 1 version'))
+    .pipe(gulp.dest('./build'))
 });
 
 gulp.task('less', function() {
@@ -67,20 +84,20 @@ gulp.task('less', function() {
         this.end();
     });
     return gulp.src('./public/**/*.less')
-        .pipe(sourcemaps.init())
-        .pipe(less_transform)
-        .pipe(sourcemaps.write())
-        .pipe(gulp.dest('./build'));
+    .pipe(sourcemaps.init())
+    .pipe(less_transform)
+    .pipe(sourcemaps.write())
+    .pipe(gulp.dest('./build'));
 });
 
 gulp.task('images', ['favicon'], function() {
     return gulp.src('public/img/**/*')
-        .pipe(gulp.dest('build/img'));
+    .pipe(gulp.dest('build/img'));
 });
 
 gulp.task('favicon', function() {
     return gulp.src('public/img/favicon.ico')
-        .pipe(gulp.dest('build/'));
+    .pipe(gulp.dest('build/'));
 });
 
 

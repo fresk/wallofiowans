@@ -1,4 +1,4 @@
-var _ = require('underscore');
+var _ = require('lodash');
 var THREE = require('three');
 var TWEEN = require('tween.js');
 
