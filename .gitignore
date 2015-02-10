@@ -1,0 +1,6 @@
+node_modules
+build
+public/img/*
+*.log
+*.DS_Store
+
