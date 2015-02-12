@@ -3,24 +3,18 @@ var THREE = require('three');
 var TWEEN = require('tween.js');
 var ui = require('./ui');
 
-
 NUM_COLUMNS = 8;
 NUM_ROWS = 4;
 
-
 var app = ui.app("wall-of-iowans");
 var data = require('./data/iowans.json');
+var panels = ui.repeat2D(panel, NUM_COLUMNS, NUM_ROWS);
+
+ui.fit_to_parent(panels);
+app.add(panels);
 
 
-
-var flip = function(panel){
-	console.log("FLIP", panel);
-
-};
-
-
-
-var panel = function(n, m, i){
+function panel(n, m, i){
 	var p = ui.box(0.9,0.9,0.01);
 	p.position.x = n * 0.95;
 	p.position.y = m * 0.95;
@@ -31,24 +25,14 @@ var panel = function(n, m, i){
 		ui.animate(p.rotation, {
 			y: Math.PI 
 		}, 500);
-
 	};
-
 	return p;
 }
 
 
-var panels = ui.repeat2D(panel, NUM_COLUMNS, NUM_ROWS);
-ui.fit_to_parent(panels);
-
-app.add(panels);
-
-
-
-
-
-//ui.scale(app, 2.1);
-
+function flip(panel){
+	console.log("FLIP", panel);
+};
 
 
 
